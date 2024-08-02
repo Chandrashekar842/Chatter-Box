@@ -2,8 +2,10 @@ import express from "express";
 import cors from "cors";
 
 import { dbConnect } from "./config/dbConnect.js";
-import { authRouter } from "./routes/authRouter.js";
 import { notFound, errorHandler } from "./middleware/errMiddleware.js";
+import { authRouter } from "./routes/authRouter.js";
+import { userRouter } from "./routes/userRouter.js";
+import { chatRouter } from "./routes/chatRouter.js";
 
 const app = express();
 
@@ -12,6 +14,10 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/auth', authRouter)
+
+app.use('/user', userRouter)
+
+app.use('/chat', chatRouter)
 
 app.use(notFound)
 

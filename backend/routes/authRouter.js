@@ -36,6 +36,6 @@ authRouter.post(
     registerUser
   );
   
-  authRouter.post("/login", [
-      body('email').isEmail().withMessage("Enter a valid email Id")
-  ], loginUser);
+authRouter.post("/login", [
+    body('email').isEmail().withMessage("Enter a valid email Id")
+], loginUser);
