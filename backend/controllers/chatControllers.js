@@ -102,48 +102,60 @@ export const createGroupChat = asyncHandler(async (req, res, next) => {
 });
 
 export const addToGroup = asyncHandler(async (req, res, next) => {
-    const { chatId, userId } = req.body
+  const { chatId, userId } = req.body;
 
-    const updatedChat = await Chat.findByIdAndUpdate(chatId, {
-        $push: { users: userId }
-    }, {
-        new: true
-    })
-
-    if(!updatedChat) {
-        res.status(400)
-        throw new Error('No chat found!!')
-    } else {
-        res.status(200).json({ chat:  updatedChat })
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $push: { users: userId },
+    },
+    {
+      new: true,
     }
+  );
+
+  if (!updatedChat) {
+    res.status(400);
+    throw new Error("No chat found!!");
+  } else {
+    res.status(200).json({ chat: updatedChat });
+  }
 });
 
 export const removeFromGroup = asyncHandler(async (req, res, next) => {
-    const { chatId, userId } = req.body
+  const { chatId, userId } = req.body;
 
-    const updatedChat = await Chat.findByIdAndUpdate(chatId, {
-        $pull: { users: userId }
-    }, {
-        new: true
-    })
-
-    if(!updatedChat) {
-        res.status(400)
-        throw new Error('No chat found!!')
-    } else {
-        res.status(200).json({ chat:  updatedChat })
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $pull: { users: userId },
+    },
+    {
+      new: true,
     }
+  );
+
+  if (!updatedChat) {
+    res.status(400);
+    throw new Error("No chat found!!");
+  } else {
+    res.status(200).json({ chat: updatedChat });
+  }
 });
 
 export const renameGroup = asyncHandler(async (req, res, next) => {
-    const { chatId, chatName } = req.body
+  const { chatId, chatName } = req.body;
 
-    const updatedChat = await Chat.findByIdAndUpdate(chatId, { chatName: chatName }, { new: true })
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    { chatName: chatName },
+    { new: true }
+  );
 
-    if(!updatedChat) {
-        res.status(400)
-        throw new Error("No chat found")
-    } else {
-        res.status(200).json({ chat: updatedChat })
-    }
+  if (!updatedChat) {
+    res.status(400);
+    throw new Error("No chat found");
+  } else {
+    res.status(200).json({ chat: updatedChat });
+  }
 });
