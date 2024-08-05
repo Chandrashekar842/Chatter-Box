@@ -76,6 +76,10 @@ export const RegisterPage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          backgroundColor: "#F5FFFA",
+          padding: 4,
+          borderRadius: 7,
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)"
         }}
       >
         <Typography component="h1" variant="h5">

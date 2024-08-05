@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
+import { ChatState } from '../context/ChatProvider';
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +23,8 @@ export const LoginPage = () => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+
+  const { setUser } = ChatState()
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -38,7 +41,7 @@ export const LoginPage = () => {
         const token = response?.data.token
         localStorage.setItem('chatterBoxToken', token)
         localStorage.setItem('loggedInUser', JSON.stringify(user))
-        alert("logged IN")
+        navigate('/')
         setError("");
       }
     } catch (error) {
@@ -57,6 +60,10 @@ export const LoginPage = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          backgroundColor: "#F5FFFA",
+          padding: 4,
+          borderRadius: 7,
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)"
         }}
       >
         <Typography component="h1" variant="h5">
@@ -105,7 +112,7 @@ export const LoginPage = () => {
             sx={{ mt: 3, mb: 2 }}
             onClick={handleSubmit}
           >
-            Sign Up
+            Login
           </Button>
           <Grid container justifyContent="center">
             <Grid item>
