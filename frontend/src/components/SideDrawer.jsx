@@ -120,7 +120,8 @@ export const SideDrawer = () => {
     setToastContent('')
   };
 
-  const accessChat = async (userId) => {
+  const accessChat = async (user) => {
+    const userId = user._id
     try {
       setLoadingChat(true)
       const { data } = await axios.post('http://localhost:8000/chat', { userId }, {
@@ -281,7 +282,7 @@ export const SideDrawer = () => {
               </Box>
             ) : (
               <Box padding="5px">
-                <UsersDisplay users={searchResult} accessChat={accessChat}/>
+                <UsersDisplay users={searchResult} handleClick={accessChat} groupChat={false}/>
               </Box>
             )}
             {loadingChat && 
