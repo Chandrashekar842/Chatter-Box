@@ -16,7 +16,7 @@ import { ChatState } from "../context/ChatProvider";
 import { GroupChatModal } from "./GroupChatModal";
 import AddCircleIcon from "@mui/icons-material/Add";
 
-export const MyChats = () => {
+export const MyChats = ({ setFetch, fetch }) => {
   const [loggedInUser, setLoggedInUser] = useState("");
   const [openToast, setOpenToast] = useState(false);
   const [toastContent, setToastContent] = useState("");
@@ -50,7 +50,7 @@ export const MyChats = () => {
   useEffect(() => {
     setLoggedInUser(JSON.parse(localStorage.getItem("loggedInUser")));
     fetchChats();
-  }, [chats]);
+  }, [fetch]);
 
   const getSender = (loggedInUser, chat) => {
     
@@ -66,6 +66,7 @@ export const MyChats = () => {
       sx={{
         display: {
           xs: selectedChat ? "none" : "flex",
+          sm: 'flex',
           md: "flex",
           ld: "flex",
         },
@@ -73,8 +74,8 @@ export const MyChats = () => {
         alignItems: "center",
         width: {
           xs: "100%",
-          sm: "33%",
-          md: "33%",
+          sm: "40%",
+          md: "40%",
           lg: "33%",
         },
         backgroundColor: "white",
@@ -97,7 +98,7 @@ export const MyChats = () => {
           sx={{
             fontSize: {
               xs: "16px",
-              sm: "16px",
+              sm: "12px",
               md: "18px",
             },
             padding: "4px 7px",
@@ -105,19 +106,19 @@ export const MyChats = () => {
         >
           My Chats
         </Typography>
-        <GroupChatModal>
+        <GroupChatModal setFetch={setFetch} fetch={fetch}>
           <Button
             sx={{
               color: "#000",
               padding: "10px",
               fontSize: {
-                xs: "10px",
-                sm: "12px",
+                xs: "12px",
+                sm: "10px",
                 md: "14px",
               },
             }}
           >
-            <span style={{ fontWeight: "bolder" }}>New Group Chat</span>{" "}
+            <span style={{ fontWeight: "bolder" }}>Create Group </span>{" "}
             <AddCircleIcon sx={{ fontSize: "27px" }} />
           </Button>
         </GroupChatModal>
@@ -152,7 +153,7 @@ export const MyChats = () => {
                 }
                 secondary="sample text"
                 primaryTypographyProps={{
-                  variant: "body1", // Smaller primary text
+                  variant: "body2", // Smaller primary text
                   noWrap: true, // Prevent text wrapping
                 }}
                 secondaryTypographyProps={{
@@ -163,7 +164,7 @@ export const MyChats = () => {
                   // Prevents text wrapping
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  margin: 0,
+                  margin: 0
                 }}
               />
             </ListItem>

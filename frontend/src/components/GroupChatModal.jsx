@@ -15,7 +15,7 @@ import { ChatState } from "../context/ChatProvider";
 import { UsersDisplay } from "./UsersDisplay";
 import axios from "axios";
 
-export const GroupChatModal = ({ children }) => {
+export const GroupChatModal = ({ children, setFetch, fetch }) => {
   const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -114,6 +114,7 @@ export const GroupChatModal = ({ children }) => {
       })
       if(data) {
         setChats([data.group, ...chats])
+        setFetch(!fetch)
         handleClose()
       }
     } catch(err) {
