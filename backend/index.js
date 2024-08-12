@@ -6,6 +6,7 @@ import { notFound, errorHandler } from "./middleware/errMiddleware.js";
 import { authRouter } from "./routes/authRouter.js";
 import { userRouter } from "./routes/userRouter.js";
 import { chatRouter } from "./routes/chatRouter.js";
+import { messageRouter } from "./routes/messageRouter.js";
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.use('/auth', authRouter)
 app.use('/user', userRouter)
 
 app.use('/chat', chatRouter)
+
+app.use('/message', messageRouter)
 
 app.use(notFound)
 
