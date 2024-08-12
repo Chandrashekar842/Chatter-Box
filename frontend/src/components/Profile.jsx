@@ -34,7 +34,7 @@ export const ReusableModal = ({ open, onClose, title, user, actions }) => {
         <h2 id="modal-title">{title}</h2>
         <AvatarDisplay name={user.name} style={avatarStyle}/>
         <br />
-        <Typography variant="h5">Email: {user.email}</Typography>
+        <Typography variant="h6">Email: {user.email}</Typography>
         <Box mt={2}>
           {actions ? (
             actions
