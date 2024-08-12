@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../App.css'
+import "../App.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -30,6 +30,7 @@ import { ChatState } from "../context/ChatProvider";
 import { ReusableModal } from "./Profile";
 import { AvatarDisplay } from "./AvatarDisplay";
 import { UsersDisplay } from "./UsersDisplay";
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 export const SideDrawer = () => {
   const navigate = useNavigate();
@@ -83,12 +84,12 @@ export const SideDrawer = () => {
   };
 
   const token = localStorage.getItem("chatterBoxToken");
-  const [openToast, setOpenToast] = useState(false)
-  const [toastContent, setToastContent] = useState('')
+  const [openToast, setOpenToast] = useState(false);
+  const [toastContent, setToastContent] = useState("");
 
   const handleSearch = async () => {
     if (!search) {
-      setToastContent('Enter user to search')
+      setToastContent("Enter user to search");
       setOpenToast(true);
       return;
     }
@@ -107,8 +108,8 @@ export const SideDrawer = () => {
         setSearchResult(data.users);
       }
     } catch (error) {
-      setToastContent('Error fetching the user')
-      setOpenToast(true)
+      setToastContent("Error fetching the user");
+      setOpenToast(true);
     }
   };
 
@@ -117,38 +118,41 @@ export const SideDrawer = () => {
       return;
     }
     setOpenToast(false);
-    setToastContent('')
+    setToastContent("");
   };
 
   const accessChat = async (user) => {
-    const userId = user._id
+    const userId = user._id;
     try {
-      setLoadingChat(true)
-      const { data } = await axios.post('http://localhost:8000/chat', { userId }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      setLoadingChat(true);
+      const { data } = await axios.post(
+        "http://localhost:8000/chat",
+        { userId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }) 
-      if(data) {
-        if(!chats.find(chat => chat._id === data._id)) {
-          setChats([data, ...chats])
+      );
+      if (data) {
+        if (!chats.find((chat) => chat._id === data._id)) {
+          setChats([data, ...chats]);
         }
-        setLoadingChat(false)
-        setSelectedChat(data)
-        toggleDrawer(false)
+        setLoadingChat(false);
+        setSelectedChat(data);
+        toggleDrawer(false);
       }
-    } catch(err) {
-      setToastContent('Error fetchng the chat!')
+    } catch (err) {
+      setToastContent("Error fetchng the chat!");
       console.log(err);
-      
-      setOpenToast(true)
+
+      setOpenToast(true);
     }
-    
-  }
+  };
 
   return (
     <Box
-      className='navbar'
+      className="navbar"
       display="flex"
       justifyContent="space-between"
       alignItems="center"
@@ -158,25 +162,42 @@ export const SideDrawer = () => {
       boxSizing="border-box"
     >
       <Tooltip title="Search users to chat" arrow placement="bottom">
-        <Button variant="outlined" onClick={() => toggleDrawer(true)}>
-          <i className="fas fa-search"></i>
+        <Typography 
+          onClick={() => toggleDrawer(true)}
+          size="small"
+          sx={{ 
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 1
+           }}
+        >
+          <SearchRoundedIcon 
+            fontSize="large"
+          />
           <Typography
             sx={{
               display: {
                 xs: "none", // hide on extra-small screens
                 sm: "none", // hide on small screens
-                md: "none", // hide on medium screens
+                md: "block", // hide on medium screens
                 lg: "block", // show on large screens
                 xl: "block", // show on extra-large screens
               },
-             
             }}
           >
             Search User
           </Typography>
-        </Button>
+        </Typography>
       </Tooltip>
-      <Typography className="app-name" sx={{ fontFamily: "monospace", fontSize: { xs: '16px', am:'24px',md: '30px' } }}>
+      <Typography
+        className="app-name"
+        sx={{
+          fontFamily: "monospace",
+          fontWeight: 400,
+          fontSize: { xs: "18px", sm: "24px", md: "30px" },
+        }}
+      >
         Chatter Box
       </Typography>
       <div>
@@ -247,9 +268,23 @@ export const SideDrawer = () => {
         />
         <Drawer open={openDrawer} onClose={() => toggleDrawer(false)}>
           <Box
-            sx={{ width: "330px", backgroundColor: "white", height: "100vh", display: 'flex', flexDirection: 'column' }}
+            sx={{
+              width: "330px",
+              backgroundColor: "white",
+              height: "100vh",
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
-            <Box sx={{ position: "sticky", top: 0, zIndex: 1000,backgroundColor: 'white', paddingBottom: '20px'}}>
+            <Box
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1000,
+                backgroundColor: "white",
+                paddingBottom: "20px",
+              }}
+            >
               <Typography sx={{ textAlign: "center", margin: "15px" }}>
                 Search user by name or email
               </Typography>
@@ -282,13 +317,18 @@ export const SideDrawer = () => {
               </Box>
             ) : (
               <Box padding="5px">
-                <UsersDisplay users={searchResult} handleClick={accessChat} groupChat={false}/>
+                <UsersDisplay
+                  users={searchResult}
+                  handleClick={accessChat}
+                  groupChat={false}
+                />
               </Box>
             )}
-            {loadingChat && 
-        <Box paddingTop="30px" textAlign="center" width="100%">
+            {loadingChat && (
+              <Box paddingTop="30px" textAlign="center" width="100%">
                 <CircularProgress color="inherit" />
-        </Box>}
+              </Box>
+            )}
           </Box>
         </Drawer>
         <Snackbar
