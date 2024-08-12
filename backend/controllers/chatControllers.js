@@ -112,7 +112,9 @@ export const addToGroup = asyncHandler(async (req, res, next) => {
     {
       new: true,
     }
-  );
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
 
   if (!updatedChat) {
     res.status(400);
@@ -133,7 +135,9 @@ export const removeFromGroup = asyncHandler(async (req, res, next) => {
     {
       new: true,
     }
-  );
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
 
   if (!updatedChat) {
     res.status(400);
@@ -150,7 +154,9 @@ export const renameGroup = asyncHandler(async (req, res, next) => {
     chatId,
     { chatName: chatName },
     { new: true }
-  );
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
 
   if (!updatedChat) {
     res.status(400);
