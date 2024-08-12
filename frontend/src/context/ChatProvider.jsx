@@ -8,14 +8,6 @@ export const ChatProvider = ({ children }) => {
   const [selectedChat, setSelectedChat] = useState();
   const [chats, setChats] = useState([]);
 
-  // useEffect(() => {
-  //     const userDetails = JSON.parse(localStorage.getItem('loggedInUser'))
-  //     if(userDetails) {
-  //         console.log(userDetails);
-  //         setUser(userDetails)
-  //     }
-  // }, [])
-
   return (
     <ChatContext.Provider
       value={{ selectedChat, setSelectedChat, chats, setChats }}
