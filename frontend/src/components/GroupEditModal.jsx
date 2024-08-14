@@ -16,7 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import { UsersDisplay } from "./UsersDisplay";
 
-export const GroupEditModal = ({ children, fetch, setFetch }) => {
+export const GroupEditModal = ({ children, fetch, setFetch , fetchMessages}) => {
   const { selectedChat, setSelectedChat } = ChatState();
 
   const token = localStorage.getItem("chatterBoxToken");
@@ -187,6 +187,7 @@ export const GroupEditModal = ({ children, fetch, setFetch }) => {
 
       if(data) {
         loggedUser._id === userToRemove._id ? setSelectedChat() : setSelectedChat(data.chat)
+        fetchMessages()
         setFetch(!fetch)
         setLoading(false)
       }

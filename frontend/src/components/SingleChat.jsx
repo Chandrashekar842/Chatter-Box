@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatState } from "../context/ChatProvider";
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControl,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import { ReusableModal } from "./Profile";
 import { GroupChatModal } from "./GroupChatModal";
 import { GroupEditModal } from "./GroupEditModal";
+import SendIcon from "@mui/icons-material/Send";
+import axios from "axios";
+import { ScrollableChat } from "./ScrollableChat";
 
 export const SingleChat = ({ fetch, setFetch }) => {
   const { selectedChat, setSelectedChat } = ChatState();
@@ -15,7 +25,12 @@ export const SingleChat = ({ fetch, setFetch }) => {
   };
   const handleModalClose = () => setOpenModal(false);
 
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  const token = localStorage.getItem("chatterBoxToken");
 
   const getSender = (loggedInUser, chat) => {
     if (chat.users) {
@@ -32,6 +47,67 @@ export const SingleChat = ({ fetch, setFetch }) => {
         : chat.users[0];
     }
   };
+
+  const typeHandler = (e) => {
+    setNewMessage(e.target.value);
+  };
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (newMessage === "") {
+      return;
+    }
+    try {
+      const { data } = await axios.post(
+        `http://localhost:8000/message`,
+        {
+          content: newMessage,
+          chatId: selectedChat._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (data) {
+        setNewMessage("");
+        setMessages([...messages, data]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchMessages = async () => {
+    if (!selectedChat) {
+      return;
+    }
+    try {
+      setLoading(true);
+
+      const { data } = await axios.get(
+        `http://localhost:8000/message/${selectedChat._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (data) {
+        console.log(data);
+        setLoading(false);
+        setMessages(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
 
   return (
     <>
@@ -80,7 +156,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
                 cursor: "pointer",
                 backgroundColor: "#6495ED",
                 borderRadius: "8px",
-                padding: "5px",
+                padding: "5px"
               }}
             />
             {!selectedChat.isGroupChat ? (
@@ -115,7 +191,11 @@ export const SingleChat = ({ fetch, setFetch }) => {
                 <Typography variant="h5" sx={{ paddingLeft: "10px" }}>
                   {selectedChat.chatName}
                 </Typography>
-                <GroupEditModal fetch={fetch} setFetch={setFetch}>
+                <GroupEditModal
+                  fetch={fetch}
+                  setFetch={setFetch}
+                  fetchMessages={fetchMessages}
+                >
                   <VisibilityRoundedIcon
                     fontSize="medium"
                     sx={{
@@ -129,7 +209,61 @@ export const SingleChat = ({ fetch, setFetch }) => {
               </>
             )}
           </Typography>
-          <Box width="100%" height="100%" backgroundColor="#F0F8FF"></Box>
+          <Box
+            sx={{
+              display:'flex',
+              flexDirection:'column',
+              justifyContent:'flex-end',
+              width: '100%',
+              height: '100%',
+              overflowY: 'hidden',
+              boxSizing:'border-box'
+            }}
+          >
+            {loading ? (
+              <Box
+                width={20}
+                height={20}
+                alignSelf='center'
+                margin='auto'
+              >
+                <CircularProgress size={50} color="info" />
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  overflowY: "scroll",
+                  scrollbarWidth: "none"
+                }}
+              >
+                <ScrollableChat messages={messages} />
+              </Box>
+            )}
+            <Box
+              marginBottom={0}
+              width="100%"
+              component="form"
+              onSubmit={sendMessage}
+              padding={1}
+              boxSizing='border-box'
+            >
+              <TextField
+                size="small"
+                value={newMessage}
+                onChange={typeHandler}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    sendMessage(e);
+                  }
+                }}
+                sx={{
+                  width: "100%",
+                }}
+              />
+            </Box>
+          </Box>
         </>
       )}
     </>
