@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import { Server } from "socket.io";
+import { createServer } from 'http'
 
 import { dbConnect } from "./config/dbConnect.js";
 import { notFound, errorHandler } from "./middleware/errMiddleware.js";
@@ -9,6 +11,13 @@ import { chatRouter } from "./routes/chatRouter.js";
 import { messageRouter } from "./routes/messageRouter.js";
 
 const app = express();
+const server = createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173'
+  },
+  pingTimeout: 60000
+})
 
 app.use(express.json());
 
@@ -27,7 +36,43 @@ app.use(notFound)
 app.use(errorHandler)
 
 dbConnect().then(() => {
-  app.listen(process.env.PORT, () => {
+  server.listen(process.env.PORT, () => {
     console.log("Connected to the server at port:", process.env.PORT);
   });
 });
+
+io.on('connection', (socket) => {
+  console.log('connected to socket')
+
+  socket.on('setup', (userData) => {
+    socket.join(userData._id)
+    socket.emit("connected")
+  })
+
+  socket.on('join chat', (room) => {
+    socket.join(room)
+    console.log('user joined room', room);
+  })
+
+  socket.on('typing', (room) => socket.in(room).emit('typing'))
+
+  socket.on('stop typing', (room) => socket.in(room).emit('stop typing'))
+
+  socket.on('new message', (newMessageReceived) => {
+    let chat = newMessageReceived.chat
+
+    if(!chat.users) return console.log("chat.users is not defined");
+
+    chat.users.forEach(user => {
+      if(user._id ===  newMessageReceived.sender._id) {
+        return
+      }
+      socket.in(user._id).emit("message received", newMessageReceived)
+    })
+  })
+
+  socket.off('setup', () => {
+    console.log('user disconnected');
+    socket.leave(userData.__id)
+  })
+})
