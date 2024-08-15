@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { ChatState } from "../context/ChatProvider";
+import axios from "axios";
 import {
   Box,
   Button,
   CircularProgress,
-  FormControl,
   TextField,
   Typography,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import { ScrollableChat } from "./ScrollableChat";
+import io from 'socket.io-client'
+import Lottie from 'react-lottie'
+
+import { ChatState } from "../context/ChatProvider";
 import { ReusableModal } from "./Profile";
 import { GroupChatModal } from "./GroupChatModal";
 import { GroupEditModal } from "./GroupEditModal";
-import SendIcon from "@mui/icons-material/Send";
-import axios from "axios";
-import { ScrollableChat } from "./ScrollableChat";
+import animationData from '../data/Animation - 1723716879764.json'
+
+const ENDPOINT = 'http://localhost:8000'
+let socket, selectedChatCompare
 
 export const SingleChat = ({ fetch, setFetch }) => {
   const { selectedChat, setSelectedChat } = ChatState();
@@ -25,12 +30,24 @@ export const SingleChat = ({ fetch, setFetch }) => {
   };
   const handleModalClose = () => setOpenModal(false);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [socketConnected, setSocketConnected] = useState(false)
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [typing, setTyping] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
 
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
   const token = localStorage.getItem("chatterBoxToken");
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  }
 
   const getSender = (loggedInUser, chat) => {
     if (chat.users) {
@@ -48,8 +65,34 @@ export const SingleChat = ({ fetch, setFetch }) => {
     }
   };
 
+  useEffect(() => {
+    socket = io(ENDPOINT)
+    socket.emit('setup', user)
+    socket.on('connected', () => setSocketConnected(true ))
+    socket.on('typing', () => setIsTyping(true))
+    socket.on('stop typing', () => setIsTyping(false))
+  }, [])
+
   const typeHandler = (e) => {
     setNewMessage(e.target.value);
+
+    if(!socketConnected) return
+
+    if(!typing) {
+      setTyping(true)
+      socket.emit('typing', selectedChat._id)
+    }
+    let lastTypingTime = new Date().getTime()
+    let timerLength = 3000
+    setTimeout(() => {
+      let timeNow = new Date().getTime()
+      let timeDiff = timeNow - lastTypingTime
+
+      if(timeDiff >= timerLength && typing) {
+        socket.emit('stop typing', selectedChat._id)
+        setTyping(false)
+      } 
+    }, timerLength);
   };
 
   const sendMessage = async (e) => {
@@ -57,6 +100,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
     if (newMessage === "") {
       return;
     }
+    socket.emit('stop typing', selectedChat._id)
     try {
       const { data } = await axios.post(
         `http://localhost:8000/message`,
@@ -72,6 +116,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
       );
       if (data) {
         setNewMessage("");
+        socket.emit('new message', data)
         setMessages([...messages, data]);
       }
     } catch (error) {
@@ -93,11 +138,11 @@ export const SingleChat = ({ fetch, setFetch }) => {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
+        );
       if (data) {
-        console.log(data);
         setLoading(false);
         setMessages(data);
+        socket.emit('join chat', selectedChat._id)
       }
     } catch (error) {
       console.log(error);
@@ -107,7 +152,18 @@ export const SingleChat = ({ fetch, setFetch }) => {
 
   useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on('message received',(newMessageReceived) => {
+      if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
+        //notify the user
+      } else {
+        setMessages([...messages, newMessageReceived])
+      }
+    })
+  })
 
   return (
     <>
@@ -249,6 +305,13 @@ export const SingleChat = ({ fetch, setFetch }) => {
               padding={1}
               boxSizing='border-box'
             >
+              {isTyping ? <div>
+                <Lottie 
+                options={defaultOptions}
+                width={70}
+                style={{ marginBottom: 15, marginLeft: 0 }}
+                />
+              </div> : <></>}
               <TextField
                 size="small"
                 value={newMessage}
