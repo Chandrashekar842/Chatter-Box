@@ -34,19 +34,19 @@ app.use('/message', messageRouter)
 
 // ======================== Deployment =====================
 
-const __dirname1 = path.resolve()
-if(process.env.NODE_ENV === 'production' ) {
-  const newPath = path.join(__dirname1, '..')
-  app.use(express.static(path.join(newPath ,'/frontend/dist')))
+// const __dirname1 = path.resolve()
+// if(process.env.NODE_ENV === 'production' ) {
+//   const newPath = path.join(__dirname1, '..')
+//   app.use(express.static(path.join(newPath ,'/frontend/dist')))
 
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(newPath, "frontend", "dist", "index.html"))
-  })
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running')
-  })
-}
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.join(newPath, "frontend", "dist", "index.html"))
+//   })
+// } else {
+//   app.get('/', (req, res) => {
+//     res.send('API is running')
+//   })
+// }
 
 // ======================== Deployment =====================
 
