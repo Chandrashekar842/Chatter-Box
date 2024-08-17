@@ -6,6 +6,7 @@ import axios from "axios";
 import {
   Alert,
   Avatar,
+  Badge,
   Box,
   Button,
   CircularProgress,
@@ -30,7 +31,7 @@ import { ChatState } from "../context/ChatProvider";
 import { ReusableModal } from "./Profile";
 import { AvatarDisplay } from "./AvatarDisplay";
 import { UsersDisplay } from "./UsersDisplay";
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
 export const SideDrawer = () => {
   const navigate = useNavigate();
@@ -39,7 +40,8 @@ export const SideDrawer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState();
 
-  const { setSelectedChat, chats, setChats } = ChatState();
+  const { setSelectedChat, chats, setChats, notification, setNotification } =
+    ChatState();
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const [anchorEl1, setAnchorEl1] = useState(null);
@@ -150,6 +152,14 @@ export const SideDrawer = () => {
     }
   };
 
+  const getSender = (loggedInUser, chat) => {
+    if (chat.users) {
+      return chat.users[0]._id === loggedInUser._id
+        ? chat.users[1].name
+        : chat.users[0].name;
+    }
+  };
+
   return (
     <Box
       className="navbar"
@@ -162,19 +172,17 @@ export const SideDrawer = () => {
       boxSizing="border-box"
     >
       <Tooltip title="Search users to chat" arrow placement="bottom">
-        <Typography 
+        <Typography
           onClick={() => toggleDrawer(true)}
           size="small"
-          sx={{ 
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 1
-           }}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 1,
+          }}
         >
-          <SearchRoundedIcon 
-            fontSize="large"
-          />
+          <SearchRoundedIcon fontSize="large" />
           <Typography
             sx={{
               display: {
@@ -207,9 +215,11 @@ export const SideDrawer = () => {
           aria-haspopup="true"
           onClick={handleClickMenu1}
         >
-          <CircleNotificationsSharpIcon
-            sx={{ fontSize: "2.75rem", color: "black" }}
-          />
+          <Badge badgeContent={notification.length} color="error" overlap="circular">
+            <CircleNotificationsSharpIcon
+              sx={{ fontSize: "2.75rem", color: "black" }}
+            />
+          </Badge>
         </Button>
         <Menu
           id="simple-menu"
@@ -225,7 +235,21 @@ export const SideDrawer = () => {
             horizontal: "right",
           }}
         >
-          <MenuItem>No new messages</MenuItem>
+          {!notification.length && <MenuItem>No new Messages</MenuItem>}
+          {notification.map((notif) => (
+            <MenuItem
+              key="notif._id"
+              onClick={() => {
+                setSelectedChat(notif.chat);
+                setNotification(notification.filter((n) => n !== notif));
+                handleCloseMenu1();
+              }}
+            >
+              {notif.chat.isGroupChat
+                ? `new message from ${notif.chat.chatName}`
+                : `new message from ${getSender(user, notif.chat)}`}
+            </MenuItem>
+          ))}
         </Menu>
 
         <Button

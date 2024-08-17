@@ -23,7 +23,7 @@ const ENDPOINT = 'http://localhost:8000'
 let socket, selectedChatCompare
 
 export const SingleChat = ({ fetch, setFetch }) => {
-  const { selectedChat, setSelectedChat } = ChatState();
+  const { selectedChat, setSelectedChat, notification, setNotification } = ChatState();
   const [openModal, setOpenModal] = useState(false);
   const handleModalOpen = () => {
     setOpenModal(true);
@@ -158,7 +158,10 @@ export const SingleChat = ({ fetch, setFetch }) => {
   useEffect(() => {
     socket.on('message received',(newMessageReceived) => {
       if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
-        //notify the user
+        if(!notification.includes(newMessageReceived)) {
+          setNotification([newMessageReceived, ...notification])
+          setFetch(!fetch)
+        }
       } else {
         setMessages([...messages, newMessageReceived])
       }
