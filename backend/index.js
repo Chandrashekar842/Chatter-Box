@@ -9,6 +9,7 @@ import { authRouter } from "./routes/authRouter.js";
 import { userRouter } from "./routes/userRouter.js";
 import { chatRouter } from "./routes/chatRouter.js";
 import { messageRouter } from "./routes/messageRouter.js";
+import path from "path";
 
 const app = express();
 const server = createServer(app)
@@ -30,6 +31,24 @@ app.use('/user', userRouter)
 app.use('/chat', chatRouter)
 
 app.use('/message', messageRouter)
+
+// ======================== Deployment =====================
+
+const __dirname1 = path.resolve()
+if(process.env.NODE_ENV === 'production' ) {
+  const newPath = path.join(__dirname1, '..')
+  app.use(express.static(path.join(newPath ,'/frontend/dist')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(newPath, "frontend", "dist", "index.html"))
+  })
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running')
+  })
+}
+
+// ======================== Deployment =====================
 
 app.use(notFound)
 
