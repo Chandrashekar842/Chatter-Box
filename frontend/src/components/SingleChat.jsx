@@ -317,6 +317,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
               </div> : <></>}
               <TextField
                 size="small"
+                placeholder="Type here..."
                 value={newMessage}
                 onChange={typeHandler}
                 onKeyDown={(e) => {
@@ -325,7 +326,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
                   }
                 }}
                 sx={{
-                  width: "100%",
+                  width: "100%"
                 }}
               />
             </Box>
