@@ -72,6 +72,7 @@ export const SideDrawer = () => {
   const handleLogout = () => {
     localStorage.removeItem("chatterBoxToken");
     localStorage.removeItem("loggedInUser");
+    setSelectedChat('')
     navigate("/login");
   };
 
