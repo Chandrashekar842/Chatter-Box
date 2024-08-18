@@ -11,12 +11,14 @@ import {
   Container,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
 
 export const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +36,8 @@ export const RegisterPage = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/auth/register', {
+      setLoading(true)
+      const response = await axios.post('https://chatter-box-backend-2stj.onrender.com/auth/register', {
         name: userName,
         email: email,
         password: password,
@@ -64,7 +67,7 @@ export const RegisterPage = () => {
         setErrorMessages(newErrorMessages);
       }
     }
-
+    setLoading(false)
   };
 
   return (
@@ -154,6 +157,7 @@ export const RegisterPage = () => {
           >
             Sign Up
           </Button>
+          <Box sx={{ width: '100%', textAlign: 'center' }}>{loading && <CircularProgress />}</Box>
           <Grid container justifyContent="center">
             <Grid item>
               <Link href="/login" variant="body2">

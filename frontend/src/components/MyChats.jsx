@@ -33,7 +33,7 @@ export const MyChats = ({ setFetch, fetch }) => {
   const fetchChats = async () => {
     const token = localStorage.getItem("chatterBoxToken");
     try {
-      const { data } = await axios.get("http://localhost:8000/chat", {
+      const { data } = await axios.get("https://chatter-box-backend-2stj.onrender.com/chat", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

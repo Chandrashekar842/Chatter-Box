@@ -69,7 +69,7 @@ export const GroupChatModal = ({ children, setFetch, fetch }) => {
       setLoading(true);
       try {
         const { data } = await axios.get(
-          `http://localhost:8000/user?search=${search}`,
+          `https://chatter-box-backend-2stj.onrender.com/user?search=${search}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -104,7 +104,7 @@ export const GroupChatModal = ({ children, setFetch, fetch }) => {
       return
     }
     try {
-      const { data } = await axios.post(`http://localhost:8000/chat/group`, {
+      const { data } = await axios.post(`https://chatter-box-backend-2stj.onrender.com/chat/group`, {
         name: groupChatName,
         users: JSON.stringify(selectedUsers.map((u) => u._id))
       }, {

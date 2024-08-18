@@ -99,7 +99,7 @@ export const SideDrawer = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `http://localhost:8000/user?search=${search}`,
+        `https://chatter-box-backend-2stj.onrender.com/user?search=${search}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -129,7 +129,7 @@ export const SideDrawer = () => {
     try {
       setLoadingChat(true);
       const { data } = await axios.post(
-        "http://localhost:8000/chat",
+        "https://chatter-box-backend-2stj.onrender.com/chat",
         { userId },
         {
           headers: {

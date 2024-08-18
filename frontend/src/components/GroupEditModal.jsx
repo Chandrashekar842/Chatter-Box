@@ -65,7 +65,7 @@ export const GroupEditModal = ({ children, fetch, setFetch , fetchMessages}) => 
     try {
       setRenameLoading(true);
       const { data } = await axios.put(
-        `http://localhost:8000/chat/group-rename`,
+        `https://chatter-box-backend-2stj.onrender.com/chat/group-rename`,
         {
           chatId: selectedChat._id,
           chatName: chatName,
@@ -102,7 +102,7 @@ export const GroupEditModal = ({ children, fetch, setFetch , fetchMessages}) => 
       setLoading(true);
       try {
         const { data } = await axios.get(
-          `http://localhost:8000/user?search=${search}`,
+          `https://chatter-box-backend-2stj.onrender.com/user?search=${search}`,
           {
             headers: {
               Authorization: `Beaeer ${token}`,
@@ -144,7 +144,7 @@ export const GroupEditModal = ({ children, fetch, setFetch , fetchMessages}) => 
       setLoading(true);
 
       const { data } = await axios.put(
-        `http://localhost:8000/chat/add-to-group`,
+        `https://chatter-box-backend-2stj.onrender.com/chat/add-to-group`,
         {
           chatId: selectedChat._id,
           userId: userToAdd._id,
@@ -176,7 +176,7 @@ export const GroupEditModal = ({ children, fetch, setFetch , fetchMessages}) => 
     try {
       setLoading(true) 
 
-      const { data } = await axios.put(`http://localhost:8000/chat/remove-user`, {
+      const { data } = await axios.put(`https://chatter-box-backend-2stj.onrender.com/chat/remove-user`, {
         chatId: selectedChat._id,
         userId: userToRemove._id
       },{

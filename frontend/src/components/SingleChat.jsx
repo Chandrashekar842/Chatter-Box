@@ -19,7 +19,7 @@ import { GroupChatModal } from "./GroupChatModal";
 import { GroupEditModal } from "./GroupEditModal";
 import animationData from '../data/Animation - 1723716879764.json'
 
-const ENDPOINT = 'http://localhost:8000'
+const ENDPOINT = 'https://chatter-box-backend-2stj.onrender.com'
 let socket, selectedChatCompare
 
 export const SingleChat = ({ fetch, setFetch }) => {
@@ -103,7 +103,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
     socket.emit('stop typing', selectedChat._id)
     try {
       const { data } = await axios.post(
-        `http://localhost:8000/message`,
+        `https://chatter-box-backend-2stj.onrender.com/message`,
         {
           content: newMessage,
           chatId: selectedChat._id,
@@ -132,7 +132,7 @@ export const SingleChat = ({ fetch, setFetch }) => {
       setLoading(true);
 
       const { data } = await axios.get(
-        `http://localhost:8000/message/${selectedChat._id}`,
+        `https://chatter-box-backend-2stj.onrender.com/message/${selectedChat._id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
